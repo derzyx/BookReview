@@ -1,0 +1,15 @@
+﻿@model BookReview.Models.BookReviewModel
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1>@Model.ReviewedBook.Title</h1>
+            <p><b>@Model.ReviewedBook.Author</b></p>
+            <p>Kod książki: @Model.ReviewedBook.IdentyficationCode</p>
+            <p>Data publikacji: @Model.ReviewedBook.PublishDate</p>
+            <p><b>@Model.ReviewedBook.Summary</b></p>
+            <h3>Średnia ocen: @Model.ReviewedBook.AvgScore</h3>
+            <p>Ilość recenzji: @Model.ReviewedBook.ReviewsCount</p>
+        </div>
+    </div>
+</div>

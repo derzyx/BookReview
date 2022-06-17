@@ -1,0 +1,101 @@
+﻿@using BookReview.ClassLibrary
+@using BookReview.ClassLibrary.API_request_models
+@model BookReview.Models.BookSearchModel
+@{
+    string imgUrl = string.Empty;
+    string authors = string.Empty;
+    string bookIdentifier = string.Empty;
+}
+
+<div class="container">
+    <form method="post" asp-controller="FindBook" asp-action="ExternalSearchPost">
+        <div class="row">
+            <div class="col">
+                <label>Tytuł:</label>
+                <input asp-for=@Model.BookSearchParams.Title/>
+            </div>
+            <div class="col">
+                <label>Autor/Autorzy:</label>
+                <input asp-for=@Model.BookSearchParams.Author/>
+            </div>
+            <div class="col">
+                <label>Kod identyfikacyjny książki:</label>
+                <input asp-for=@Model.BookSearchParams.IdentyficationCode/>
+            </div>
+            <div class="col">
+                <input type="submit" value="Szukaj" class="btn btn-primary"/>
+            </div>
+        </div>
+    </form>
+</div>
+
+@if(Model.Books != null)
+{
+    <div class="container">
+        <div class="row">
+            @if(Model.Books.items != null)
+            {
+                @foreach(BookJSON book in Model.Books.items){
+                    <div class="col p-3 border border-primary">
+                        <form method="post" asp-controller="Book" asp-action="Details">
+                            @{imgUrl = (book.volumeInfo.imageLinks == null) ? "" : book.volumeInfo.imageLinks.thumbnail;}
+                            <img src='@imgUrl'/>
+                            <input type="hidden" name="ImgUrl" value="@imgUrl" />
+
+                            <h1>@book.volumeInfo.title</h1>
+                            <input type="hidden" name="Title" value="@book.volumeInfo.title" />
+
+                            @{
+                                authors = string.Empty;
+                                foreach(string author in book.volumeInfo.authors)
+                                {
+                                    authors += author + " ";
+                                }
+                            }
+                            <h3>@authors</h3>
+                            <input type="hidden" name="Author" value="@authors" />
+
+                            <p>@book.volumeInfo.subtitle</p>
+                            <input type="hidden" name="Summary" value="@book.volumeInfo.subtitle" />
+
+                            <p>Kod książki:</p>
+                            @if(book.volumeInfo.industryIdentifiers != null){
+                                bookIdentifier = string.Empty;
+                                foreach(ISBN isbn in book.volumeInfo.industryIdentifiers)
+                                {
+                                    if(isbn.type == "OTHER")
+                                    {
+                                        <p>@isbn.identifier.Split(":")[0]: @isbn.identifier.Split(":")[1]</p>
+                                        bookIdentifier += isbn.identifier;
+                                    }
+                                    else
+                                    {
+                                        <p>@isbn.type: @isbn.identifier</p>
+                                        bookIdentifier += isbn.type + ":" + isbn.identifier;
+                                    }
+                                }
+                            }
+                            <input tpye="hidden" name="IdentyficationCode" value="@bookIdentifier" />
+                        
+                            <p>Rok publikacji: @book.volumeInfo.publishedDate</p>
+                            <input type="hidden" name="PublishDate" value="@book.volumeInfo.publishedDate" />
+
+                            <input type="submit" value="Dodaj recenzję" class="btn btn-primary"/>
+                        </form>
+                    </div>
+                }
+            }
+            else
+            {
+                <h2>Nie znaleziono książek.</h2>
+                <p>Wskazówki wyszukiwania:</p>
+                <ul>
+                    <li>Aby uzyskać najdokładniejsze wyniki wpisz jak najwięcej danych o książce</li>
+                    <li>Użyj znaków diakrytycznych np. ć, ö, ñ itp. jeśli znajdują się w tytule lub w imieniu autora.</li>
+                    <li>Kod książki musi w całości zgadzać się z wyszukiwaną książką. Wprowadzenie części kodu nie wyświetli wyników.</li>
+                </ul>                
+            }
+        </div>
+    </div>
+
+}

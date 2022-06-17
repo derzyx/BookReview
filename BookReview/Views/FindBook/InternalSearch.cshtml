@@ -1,0 +1,48 @@
+﻿@model BookReview.Models.BookSearchModel
+
+
+<div class="container">
+    <form method="post" asp-controller="Book" asp-action="InternalSearchPost">
+        <div class="row">
+            <div class="col">
+                <label>Tytuł:</label>
+                <input asp-for=@Model.Book.Title/>
+            </div>
+            <div class="col">
+                <label>Autor/Autorzy:</label>
+                <input asp-for=@Model.Book.Author/>
+            </div>
+            <div class="col">
+                <label>Kod identyfikacyjny książki:</label>
+                <input asp-for=@Model.Book.IdentyficationCode/>
+            </div>
+            <div class="col">
+                <input type="submit" value="Szukaj" class="btn btn-primary"/>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+@if(Model.InternalBooks != null)
+{
+    if(Model.InternalBooks.Count > 0)
+    {
+        <div class="container">
+
+        </div>
+    }
+    else
+    {
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h1>Nikt nie ocenił jeszcze tej książki</h1>
+                    <p>Nie znaleziono tej książki w naszej bazie. Wyszukaj książkę w bazie zewnętrznej aby dodać recenzję.</p>
+                    <a asp-controller="Book" asp-action="ExternalSearch" class="btn btn-primary">Szukaj w bazie Google Books</a>
+                </div>
+            </div>
+        </div>        
+    }
+
+}
