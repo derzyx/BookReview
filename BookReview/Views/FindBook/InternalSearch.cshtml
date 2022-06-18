@@ -1,8 +1,9 @@
-﻿@model BookReview.Models.BookSearchModel
+﻿@using BookReview.ClassLibrary
+@model BookReview.Models.BookSearchModel
 
 
 <div class="container">
-    <form method="post" asp-controller="Book" asp-action="InternalSearchPost">
+    <form method="post" asp-controller="FindBook" asp-action="InternalSearchPost">
         <div class="row">
             <div class="col">
                 <label>Tytuł:</label>
@@ -29,7 +30,20 @@
     if(Model.InternalBooks.Count > 0)
     {
         <div class="container">
-
+            <div class="row">
+                @foreach(Book book in Model.InternalBooks){
+                    <div class="col">
+                        <img src='@book.ImgUrl'/>
+                        <h1>@book.Title</h1>
+                        <p><b>@book.Author</b></p>
+                        <p>@book.Summary</p>
+                        <p>@book.PublishDate</p>
+                        <p>@book.IdentyficationCode</p>
+                        <h3>Średnia ocen: @book.AvgScore /5</h3>
+                        <p>Ilość recenzji: @book.ReviewsCount</p>
+                    </div>
+                }
+            </div>
         </div>
     }
     else

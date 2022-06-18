@@ -7,7 +7,7 @@ namespace BookReview.Models
     {
         public BookDTO ReviewedBook { get; set; }
 
-        public Review Review { get; set; }
+        public ReviewDTO Review { get; set; }
         public List<Review> Reviews { get; set; }
     }
 }

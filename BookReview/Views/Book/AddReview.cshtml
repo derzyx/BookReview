@@ -1,0 +1,40 @@
+﻿@model BookReview.Models.BookReviewModel
+
+<form method="post" asp-controller="Book" asp-action="Reviews">
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h1>@Model.ReviewedBook.Title</h1>
+                <p><b>@Model.ReviewedBook.Author</b></p>
+                <p>Kod książki: @Model.ReviewedBook.IdentyficationCode</p>
+                <p>Data publikacji: @Model.ReviewedBook.PublishDate</p>
+                <p><b>@Model.ReviewedBook.Summary</b></p>
+                <h3>Średnia ocen: @Model.ReviewedBook.AvgScore</h3>
+                <p>Ilość recenzji: @Model.ReviewedBook.ReviewsCount</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                    <h2>Twoja recenzja</h2>
+                    <textarea rows="6" asp-for=@Model.Review.Summary ></textarea>
+                    <input type="number" max="5" min="1" asp-for=@Model.Review.Score />
+                    <input type="submit" value="Dodaj recenzję" />
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <input type="hidden" asp-for=@Model.ReviewedBook.Title value="@Model.ReviewedBook.Title"/>
+        <input type="hidden" asp-for=@Model.ReviewedBook.Author value="@Model.ReviewedBook.Author"/>
+        <input type="hidden" asp-for=@Model.ReviewedBook.IdentyficationCode value="@Model.ReviewedBook.IdentyficationCode"/>
+        <input type="hidden" asp-for=@Model.ReviewedBook.PublishDate value="@Model.ReviewedBook.PublishDate"/>
+        <input type="hidden" asp-for=@Model.ReviewedBook.Summary value="@Model.ReviewedBook.Summary"/>
+        <input type="hidden" asp-for=@Model.ReviewedBook.AvgScore value="@Model.ReviewedBook.AvgScore"/>
+        <input type="hidden" asp-for=@Model.ReviewedBook.ReviewsCount value="@Model.ReviewedBook.ReviewsCount"/>
+    </div>
+
+</form>

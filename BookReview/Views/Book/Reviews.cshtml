@@ -1,4 +1,7 @@
-﻿@model BookReview.Models.BookReviewModel
+﻿@using BookReview.ClassLibrary
+@inject BookReview.Data.DataContext _context
+@model BookReview.Models.BookReviewModel
+
 
 <div class="container">
     <div class="row">
@@ -11,5 +14,19 @@
             <h3>Średnia ocen: @Model.ReviewedBook.AvgScore</h3>
             <p>Ilość recenzji: @Model.ReviewedBook.ReviewsCount</p>
         </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        @foreach(Review review in Model.Reviews)
+        {
+            <div class="col">
+                <h3>@{_context.User.Where(x => x.UserId == review.AuthorId_FK).Select(x => x.Nick);}</h3>
+                <p>@review.Date</p>
+                <p>@review.Summary</p>
+                <p>Ocena: @review.Score /5</p>
+            </div>
+        }
     </div>
 </div>

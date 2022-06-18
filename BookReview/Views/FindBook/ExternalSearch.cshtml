@@ -37,7 +37,7 @@
             {
                 @foreach(BookJSON book in Model.Books.items){
                     <div class="col p-3 border border-primary">
-                        <form method="post" asp-controller="Book" asp-action="Details">
+                        <form method="post" asp-controller="Book" asp-action="AddReview">
                             @{imgUrl = (book.volumeInfo.imageLinks == null) ? "" : book.volumeInfo.imageLinks.thumbnail;}
                             <img src='@imgUrl'/>
                             <input type="hidden" name="ImgUrl" value="@imgUrl" />
@@ -71,7 +71,7 @@
                                     else
                                     {
                                         <p>@isbn.type: @isbn.identifier</p>
-                                        bookIdentifier += isbn.type + ":" + isbn.identifier;
+                                        bookIdentifier += isbn.type + ":" + isbn.identifier + " ";
                                     }
                                 }
                             }
