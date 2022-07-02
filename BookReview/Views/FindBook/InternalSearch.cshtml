@@ -1,6 +1,8 @@
 ﻿@using BookReview.ClassLibrary
 @model BookReview.Models.BookSearchModel
-
+@{
+    string imgUrl = string.Empty;
+}
 
 <div class="container">
     <form method="post" asp-controller="FindBook" asp-action="InternalSearchPost">
@@ -32,15 +34,33 @@
         <div class="container">
             <div class="row">
                 @foreach(Book book in Model.InternalBooks){
-                    <div class="col">
-                        <img src='@book.ImgUrl'/>
-                        <h1>@book.Title</h1>
-                        <p><b>@book.Author</b></p>
-                        <p>@book.Summary</p>
-                        <p>@book.PublishDate</p>
-                        <p>@book.IdentyficationCode</p>
-                        <h3>Średnia ocen: @book.AvgScore /5</h3>
-                        <p>Ilość recenzji: @book.ReviewsCount</p>
+                    <div class="col-12 my-3 border border-secondary">
+                        <div class="row d-flex d-row">
+                            <div class="col-2">
+                                @{imgUrl = (string.IsNullOrEmpty(book.ImgUrl)) ? "/img/No_picture_available.png" : book.ImgUrl;}
+                                <img src='@imgUrl' style="width:100%;"/>
+                            </div>
+                            <div class="col-10 p-3">
+                                <h1>@book.Title</h1>
+                                <p><b>@book.Author</b></p>
+                                <p>@book.Summary</p>
+                                <p>@book.PublishDate</p>
+                                <p>@book.IdentyficationCode</p>
+                            </div>
+                        </div>
+                        <hr class="my-0 mx-3"/>
+                        <div class="row my-4">
+                            <div class="col-6 px-5">
+                                <h3>Średnia ocen: @book.AvgScore / 5</h3>
+                                <p class="m-0">Ilość recenzji: @book.ReviewsCount</p>
+                            </div>
+                            <div class="col-6 px-5 d-flex justify-content-end align-items-center">
+                                    <input type="submit" class="btn btn-primary" value="Dodaj recenzję" asp-controller="Book" asp-action="AddReview" asp-route-id=@book.BookId/>
+@*                                <form method="post" asp-controller="Book" asp-action="AddReview">
+                                    <input type="hidden" name="BookId" value=@book.BookId />
+                                </form*@>
+                            </div>
+                        </div>
                     </div>
                 }
             </div>

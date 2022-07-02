@@ -36,51 +36,65 @@
             @if(Model.Books.items != null)
             {
                 @foreach(BookJSON book in Model.Books.items){
-                    <div class="col p-3 border border-primary">
+                    <div class="col-12 p-3 my-3 border border-secondary">
                         <form method="post" asp-controller="Book" asp-action="AddReview">
-                            @{imgUrl = (book.volumeInfo.imageLinks == null) ? "" : book.volumeInfo.imageLinks.thumbnail;}
-                            <img src='@imgUrl'/>
-                            <input type="hidden" name="ImgUrl" value="@imgUrl" />
+                            <div class="row d-flex flex-row">
+                                <div class="col-2">
+                                    @{imgUrl = (book.volumeInfo.imageLinks == null) ? "/img/No_picture_available.png" : book.volumeInfo.imageLinks.thumbnail;}
+                                    <img src='@imgUrl' style="width:100%;"/>
+                                </div>
+                                <div class="col-10 p-4">
+                                    <h1>@book.volumeInfo.title</h1>
 
-                            <h1>@book.volumeInfo.title</h1>
-                            <input type="hidden" name="Title" value="@book.volumeInfo.title" />
-
-                            @{
-                                authors = string.Empty;
-                                foreach(string author in book.volumeInfo.authors)
-                                {
-                                    authors += author + " ";
-                                }
-                            }
-                            <h3>@authors</h3>
-                            <input type="hidden" name="Author" value="@authors" />
-
-                            <p>@book.volumeInfo.subtitle</p>
-                            <input type="hidden" name="Summary" value="@book.volumeInfo.subtitle" />
-
-                            <p>Kod książki:</p>
-                            @if(book.volumeInfo.industryIdentifiers != null){
-                                bookIdentifier = string.Empty;
-                                foreach(ISBN isbn in book.volumeInfo.industryIdentifiers)
-                                {
-                                    if(isbn.type == "OTHER")
-                                    {
-                                        <p>@isbn.identifier.Split(":")[0]: @isbn.identifier.Split(":")[1]</p>
-                                        bookIdentifier += isbn.identifier;
+                                    @{
+                                        authors = string.Empty;
+                                        if(book.volumeInfo.authors != null)
+                                        {
+                                            foreach(string author in book.volumeInfo.authors)
+                                            {
+                                                authors += author + " ";
+                                            }                                            
+                                        }
+                                        else
+                                        {
+                                            authors = "Brak podanego autora";
+                                        }
                                     }
-                                    else
-                                    {
-                                        <p>@isbn.type: @isbn.identifier</p>
-                                        bookIdentifier += isbn.type + ":" + isbn.identifier + " ";
-                                    }
-                                }
-                            }
-                            <input tpye="hidden" name="IdentyficationCode" value="@bookIdentifier" />
-                        
-                            <p>Rok publikacji: @book.volumeInfo.publishedDate</p>
-                            <input type="hidden" name="PublishDate" value="@book.volumeInfo.publishedDate" />
+                                    <h3>@authors</h3>
 
-                            <input type="submit" value="Dodaj recenzję" class="btn btn-primary"/>
+                                    <p>@book.volumeInfo.subtitle</p>
+
+                                    <p>Kod książki:</p>
+                                    @if(book.volumeInfo.industryIdentifiers != null){
+                                        bookIdentifier = string.Empty;
+                                        foreach(ISBN isbn in book.volumeInfo.industryIdentifiers)
+                                        {
+                                            if(isbn.type == "OTHER")
+                                            {
+                                                <p>@isbn.identifier.Split(":")[0]: @isbn.identifier.Split(":")[1]</p>
+                                                bookIdentifier += isbn.identifier;
+                                            }
+                                            else
+                                            {
+                                                <p>@isbn.type: @isbn.identifier</p>
+                                                bookIdentifier += isbn.type + ":" + isbn.identifier + " ";
+                                            }
+                                        }
+                                    }
+
+                                    <p>Rok publikacji: @book.volumeInfo.publishedDate</p>
+                                </div>
+                            </div>
+
+                            <div>
+                                <input type="hidden" name="ImgUrl" value="@imgUrl" />
+                                <input type="hidden" name="Title" value="@book.volumeInfo.title" />
+                                <input type="hidden" name="Author" value="@authors" />
+                                <input type="hidden" name="Summary" value="@book.volumeInfo.subtitle" />
+                                <input type="hidden" name="IdentyficationCode" value="@bookIdentifier" />
+                                <input type="hidden" name="PublishDate" value="@book.volumeInfo.publishedDate" />
+                                <input type="submit" value="Dodaj recenzję" class="btn btn-primary"/>
+                            </div>
                         </form>
                     </div>
                 }

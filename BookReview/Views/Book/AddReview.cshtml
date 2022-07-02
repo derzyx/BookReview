@@ -1,28 +1,49 @@
 ﻿@model BookReview.Models.BookReviewModel
+@{
+    string imgUrl = string.Empty;
+}
 
 <form method="post" asp-controller="Book" asp-action="Reviews">
 
     <div class="container">
-        <div class="row">
-            <div class="col">
+        <div class="row d-flex flex-row">
+            <div class="col-2">
+                @{imgUrl = (string.IsNullOrEmpty(Model.ReviewedBook.ImgUrl)) ? "/img/No_picture_available.png" : Model.ReviewedBook.ImgUrl;}
+                <img src='@imgUrl' style="width:100%;"/>
+            </div>
+            <div class="col-10 p-4">
                 <h1>@Model.ReviewedBook.Title</h1>
                 <p><b>@Model.ReviewedBook.Author</b></p>
                 <p>Kod książki: @Model.ReviewedBook.IdentyficationCode</p>
                 <p>Data publikacji: @Model.ReviewedBook.PublishDate</p>
                 <p><b>@Model.ReviewedBook.Summary</b></p>
+            </div>
+            <hr />
+        </div>
+        <div class="row mb-5">
+            <div class="col-12">
                 <h3>Średnia ocen: @Model.ReviewedBook.AvgScore</h3>
                 <p>Ilość recenzji: @Model.ReviewedBook.ReviewsCount</p>
             </div>
+            <hr />
         </div>
     </div>
 
+
     <div class="container">
         <div class="row">
+            <div class="col-12 mb-3">
+                <h2>Twoja recenzja</h2> 
+            </div>
             <div class="col-12">
-                    <h2>Twoja recenzja</h2>
-                    <textarea rows="6" asp-for=@Model.Review.Summary ></textarea>
-                    <input type="number" max="5" min="1" asp-for=@Model.Review.Score />
-                    <input type="submit" value="Dodaj recenzję" />
+                <textarea rows="6" asp-for=@Model.Review.Summary style="width:100%;" placeholder="treść recenzji" ></textarea>
+            </div>
+            <div class="col-12 my-3">
+                <label>Ocena od 1 do 5: </label>
+                <input type="number" max="5" min="1" asp-for=@Model.Review.Score />
+            </div>
+            <div class="col-12">
+                <input type="submit" value="Dodaj recenzję" class="btn btn-primary"/>
             </div>
         </div>
     </div>

@@ -21,54 +21,66 @@ namespace BookReview.Controlllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         //public async Task<IActionResult> Add([Bind("BookSearchParams")] BookSearchModel? book)
-        public async Task<IActionResult> AddReview(IFormCollection formCollection)
+        public async Task<IActionResult> AddReview(int? id, IFormCollection? formCollection)
         {
-            foreach (string key in formCollection.Keys)
-            {
-                Console.WriteLine("Key=" + key + " ");
-                Console.WriteLine("Value=" + formCollection[key]);
-            }
-            BookDTO bookDTO = new BookDTO
-            {
-                BookId = Convert.ToInt32(formCollection["BookId"]),
-                Title = formCollection["Title"],
-                Author = formCollection["Author"],
-                Summary = formCollection["Summary"],
-                IdentyficationCode = formCollection["IdentyficationCode"],
-                ImgUrl = formCollection["ImgUrl"],
-                PublishDate = formCollection["PublishDate"]
-            };
+            BookDTO? bookDTO = new BookDTO();
 
-            return View(bookDTO);
-        }
-
-
-        public IActionResult AddReview(int? bookId, BookDTO? book)
-        {
-            //Internal search returns Book with set ID (not 0). Books from external search don't exist in internal DB so they don't have an ID.
-            if (book.BookId == 0)
+            if(id == null || id == 0)
             {
-                return View(new BookReviewModel { ReviewedBook = book });
+                bookDTO = new BookDTO
+                {
+                    BookId = Convert.ToInt32(formCollection["BookId"]),
+                    Title = formCollection["Title"],
+                    Author = formCollection["Author"],
+                    Summary = formCollection["Summary"],
+                    IdentyficationCode = formCollection["IdentyficationCode"],
+                    ImgUrl = formCollection["ImgUrl"],
+                    PublishDate = formCollection["PublishDate"]
+                };
             }
             else
             {
-                Book existingBook = _context.Book.Find(book.BookId);
+
+            }
+
+
+            return AddReview(new BookReviewModel { ReviewedBook = bookDTO });
+        }
+
+
+        public IActionResult AddReview(BookReviewModel? bookReviewModel)
+        {
+            Book? currentBook = new Book();
+
+            currentBook = _context.Book.Where(x =>
+                x.Author == bookReviewModel.ReviewedBook.Author &&
+                x.Title == bookReviewModel.ReviewedBook.Title &&
+                x.IdentyficationCode == bookReviewModel.ReviewedBook.IdentyficationCode &&
+                x.PublishDate == bookReviewModel.ReviewedBook.PublishDate)
+            .FirstOrDefault();
+
+            if(currentBook == null)
+            {
+                return View(bookReviewModel);
+            }
+            else
+            {
                 return View(new BookReviewModel
                 {
                     ReviewedBook = new BookDTO
                     {
-                        BookId = book.BookId,
-                        Title = book.Title,
-                        Author = book.Author,
-                        Summary = book.Summary,
-                        IdentyficationCode = book.IdentyficationCode,
-                        ImgUrl = book.ImgUrl,
-                        PublishDate = book.PublishDate,
-                        AvgScore = book.AvgScore,
-                        ReviewsCount = book.ReviewsCount
+                        Title = currentBook.Title,
+                        Author = currentBook.Author,
+                        PublishDate = currentBook.PublishDate,
+                        Summary = currentBook.Summary,
+                        IdentyficationCode= currentBook.IdentyficationCode,
+                        ImgUrl = currentBook.ImgUrl,
+                        AvgScore = currentBook.AvgScore,
+                        ReviewsCount = currentBook.ReviewsCount,
                     }
                 });
             }
+
         }
 
         [HttpPost]
