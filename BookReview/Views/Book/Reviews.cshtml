@@ -1,31 +1,67 @@
 ﻿@using BookReview.ClassLibrary
 @inject BookReview.Data.DataContext _context
 @model BookReview.Models.BookReviewModel
+@{
+    string imgUrl = string.Empty;
+}
 
+    <div class="container-fluid reviewedBookBg">
+        <div class="container">
+            <div class="row d-flex flex-row p-3">
+                <div class="col-2 p-0 d-flex align-items-center">
+                @{
+                    imgUrl = (string.IsNullOrEmpty(Model.ReviewedBook.ImgUrl)) ? "/img/No_picture_available.png" : Model.ReviewedBook.ImgUrl;
+                }
+                    <img src='@imgUrl' style="width:100%;"/>
+                </div>
+                <div class="col-10 p-4">
+                    <h1>@Model.ReviewedBook.Title</h1>
+                    <p><b>@Model.ReviewedBook.Author</b></p>
+                    <p>Kod książki: @Model.ReviewedBook.IdentyficationCode</p>
+                    <p>Data publikacji: @Model.ReviewedBook.PublishDate</p>
+                    <p><b>@Model.ReviewedBook.Summary</b></p>
+                </div>
+            
+            </div>
+            <div class="row">
+                <hr />
+                <div class="col-12">
+                    <h3>Średnia ocen: @Model.ReviewedBook.AvgScore</h3>
+                    <p>Ilość recenzji: @Model.ReviewedBook.ReviewsCount</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<div class="container">
-    <div class="row">
-        <div class="col">
-            <h1>@Model.ReviewedBook.Title</h1>
-            <p><b>@Model.ReviewedBook.Author</b></p>
-            <p>Kod książki: @Model.ReviewedBook.IdentyficationCode</p>
-            <p>Data publikacji: @Model.ReviewedBook.PublishDate</p>
-            <p><b>@Model.ReviewedBook.Summary</b></p>
-            <h3>Średnia ocen: @Model.ReviewedBook.AvgScore</h3>
-            <p>Ilość recenzji: @Model.ReviewedBook.ReviewsCount</p>
+<div class="container my-5">
+    <div class="row d-flex justify-content-between">
+        <div class="col-auto">
+            <p class="m-0" style="font-size:32px;">Recenzje:</p>
+        </div>
+        <div class="col-auto">
+            <form>
+                <input type="submit" class="btn btn-primary px-5 py-2" value="Dodaj recenzję" asp-controller="Book" asp-action="AddReview" asp-route-id=@Model.ReviewedBook.BookId />
+            </form>
         </div>
     </div>
 </div>
 
 <div class="container">
     <div class="row">
-        @foreach(Review review in Model.Reviews)
+        @for (int i = 0; i < Model.Reviews.Count; i++)
         {
-            <div class="col">
-                <h3>@{_context.User.Where(x => x.UserId == review.AuthorId_FK).Select(x => x.Nick);}</h3>
-                <p>@review.Date</p>
-                <p>@review.Summary</p>
-                <p>Ocena: @review.Score /5</p>
+            <div class="col p-4 reviewBg">
+                <div class="row d-flex justify-content-between">
+                    <div class="col">
+                        <h3 class="m-0">@Model.ReviewAuthors[i]</h3>
+                        <h5 class="m-0">Ocena: @Model.Reviews[i].Score / 5</h5> 
+                    </div>
+                    <div class="col-auto d-flex align-items-end">
+                        <p class="m-0">@Model.Reviews[i].Date</p>
+                    </div>
+                </div>
+                <hr class="my-2"/>
+                <p style="font-size:18px;">@Model.Reviews[i].Summary</p>
             </div>
         }
     </div>

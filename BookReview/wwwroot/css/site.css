@@ -16,3 +16,27 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.bottomMargin{
+    margin-bottom: 7rem;
+}
+
+.reviewBg{
+    background-color: rgb(241, 241, 241);
+    border-radius: 15px;
+}
+
+.reviewedBookBg{
+    background-color: rgb(31, 31, 31);
+    color: rgb(242, 242, 242);
+}
+
+.homeMainBanner{
+    background-color: rgb(156, 172, 221);
+}
+
+.homeBookPreview{
+    background-color: rgb(42, 42, 42);
+    border-radius: 15px;
+    height: 400px;
+}

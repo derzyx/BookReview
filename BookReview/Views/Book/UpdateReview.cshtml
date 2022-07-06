@@ -3,7 +3,7 @@
     string imgUrl = string.Empty;
 }
 
-<form method="post" asp-controller="Book" asp-action="AddReview">
+<form method="post" asp-controller="Book" asp-action="UpdateReview">
 
     <div class="container-fluid reviewedBookBg">
         <div class="container">
@@ -40,7 +40,7 @@
             </div>
             <div class="col-12 my-3">
                 <label>Ocena od 1 do 5: </label>
-                <input type="number" max="5" min="1" asp-for=@Model.Review.Score class="form-control" style="width:80px;" />
+                <input type="number" max="5" min="1" asp-for=@Model.Review.Score value=@Model.Review.Score class="form-control" style="width:80px;" />
             </div>
             <div class="col d-flex justify-content-end">
                 <input type="submit" value="Dodaj recenzję" class="btn btn-primary px-5 py-2"/>
@@ -49,14 +49,7 @@
     </div>
 
     <div>
-        <input type="hidden" asp-for=@Model.ReviewedBook.Title value="@Model.ReviewedBook.Title"/>
-        <input type="hidden" asp-for=@Model.ReviewedBook.Author value="@Model.ReviewedBook.Author"/>
-        <input type="hidden" asp-for=@Model.ReviewedBook.ImgUrl value="@Model.ReviewedBook.ImgUrl"/>
-        <input type="hidden" asp-for=@Model.ReviewedBook.IdentyficationCode value="@Model.ReviewedBook.IdentyficationCode"/>
-        <input type="hidden" asp-for=@Model.ReviewedBook.PublishDate value="@Model.ReviewedBook.PublishDate"/>
-        <input type="hidden" asp-for=@Model.ReviewedBook.Summary value="@Model.ReviewedBook.Summary"/>
-        <input type="hidden" asp-for=@Model.ReviewedBook.AvgScore value="@Model.ReviewedBook.AvgScore"/>
-        <input type="hidden" asp-for=@Model.ReviewedBook.ReviewsCount value="@Model.ReviewedBook.ReviewsCount"/>
+        <input type="hidden" asp-for=@Model.Review.ReviewId value="@Model.Review.ReviewId"/>
     </div>
 
 </form>

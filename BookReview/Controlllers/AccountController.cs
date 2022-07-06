@@ -75,5 +75,24 @@ namespace BookReview.Controlllers
             }
             return View();
         }
+
+        public IActionResult MyAccount(int userId)
+        {
+            if(userId == 0)
+            {
+                return new RedirectToActionResult("Index", "Home", null);
+            }
+            else
+            {
+                List<Book> reviewedBooks = new List<Book>();
+                List<Review> reviews = _context.Review.Where(x => x.AuthorId_FK == userId).ToList();
+                foreach(Review review in reviews)
+                {
+                    reviewedBooks.Add(_context.Book.Where(x => x.BookId == review.BookId_FK).First());
+                }
+
+                return View(new MyAccountModel { Reviews = reviews, ReviewedBooks = reviewedBooks });
+            }
+        }
     }
 }

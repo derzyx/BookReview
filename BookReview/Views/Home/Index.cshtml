@@ -1,8 +1,67 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+@{
+    string imgUrl = string.Empty;
+}
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container-fluid py-5 homeMainBanner">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="display-4">Witaj na <b>BookReview</b></div>
+            </div>
+            <div class="col-12">
+                <div><p>Możesz tu zobaczyć recenzje książek lub ocenić książkę, którą ostatnio przeczytałeś/aś.</p></div>
+            </div>
+            <div class="col mt-4 d-flex justify-content-center">
+                <a asp-controller="FindBook" asp-action="InternalSearch" class="btn btn-dark px-5 py-2 my-5">Wyszukaj książkę</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row my-5">
+        <div class="col">
+            <div class="display-4">Najwyżej oceniane książki:</div>
+        </div>
+    </div>
+    <div class="row d-flex justify-content-between">
+        @for (int i = 0; i < 3; i++)
+        {
+            <div class="col-12 my-3 border border-secondary rounded">
+                <div class="row d-flex d-row p-3">
+                    <div class="col-2 p-0 d-flex align-items-center">
+                        @{
+                            imgUrl = "/img/No_picture_available.png";
+                        }
+                        <img src='@imgUrl' style="width:100%;" />
+                    </div>
+                    <div class="col-10 p-3">
+                        <h1>book.Title</h1>
+                        <p><b>book.Author</b></p>
+                        <p>book.Summary</p>
+                        <p>book.PublishDate</p>
+                        <p>book.IdentyficationCode</p>
+                    </div>
+                </div>
+                <hr class="my-0 mx-3" />
+                <div class="row d-flex justify-content-between my-4">
+                    <div class="col-auto px-5">
+                        <h3>Średnia ocen: book.AvgScore / 5</h3>
+                        <p class="m-0">Ilość recenzji: book.ReviewsCount</p>
+                    </div>
+                    <div class="col-auto m-3 m-lg-0 px-5 d-flex justify-content-end align-items-center">
+                        <form class="mr-2">
+                            <input type="submit" class="btn btn-primary py-2 px-5 mx-2" value="Dodaj recenzję" asp-controller="Book" asp-action="AddReview" asp-route-id=book.BookId />
+                        </form>
+                        <form method="post">
+                            <input type="submit" class="btn btn-primary py-2 px-5 mx-2" value="Zobacz recenzje" asp-controller="FindBook" asp-action="InternalSearchPostReviews" asp-route-bookId=book.BookId />
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 </div>

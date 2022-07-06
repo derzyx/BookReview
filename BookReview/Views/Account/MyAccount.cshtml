@@ -1,0 +1,52 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model BookReview.Models.MyAccountModel
+@{
+}
+<div class="container-fluid py-5 homeMainBanner">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="display-4">Witaj <b>Użytkownik</b></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container bottomMargin">
+    <div class="row my-5">
+        <div class="col">
+            <div class="display-4">Twoje recenzje</div>
+        </div>
+    </div>
+    <div class="row">
+        @for (int i = 0; i < Model.Reviews.Count; i++)
+        {
+            <div class="col-12 p-4 reviewBg mb-4">
+                <div class="row d-flex justify-content-between">
+                    <div class="col">
+                        <p class="m-0">@Model.ReviewedBooks[i].Author</p>
+                        <h3 class="m-0">@Model.ReviewedBooks[i].Title</h3>
+                        <h5 class="m-0">Ocena: @Model.Reviews[i].Score / 5</h5> 
+                    </div>
+                    <div class="col-auto d-flex align-items-end">
+                        <div class="row d-flex flex-column justify-content-between h-100">
+                            <div class="col-auto">
+                                <a class="btn btn-secondary" asp-controller="Book" asp-action="UpdateReview" asp-route-reviewId=@Model.Reviews[i].ReviewId>Edytuj</a>
+                                <form method="post">
+                                    <button type="submit" class="btn btn-danger" asp-controller="Book" asp-action="RemoveReview" asp-route-reviewId=@Model.Reviews[i].ReviewId>Usuń</button>
+                                </form>
+                            </div>
+                            <div class="col-auto">
+                                <p class="m-0">@Model.Reviews[i].Date</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr class="my-2"/>
+                <p style="font-size:18px;">@Model.Reviews[i].Summary</p>
+            </div>
+        }
+    </div>
+</div>

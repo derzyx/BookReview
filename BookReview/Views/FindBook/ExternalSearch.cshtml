@@ -7,23 +7,29 @@
     string bookIdentifier = string.Empty;
 }
 
-<div class="container">
-    <form method="post" asp-controller="FindBook" asp-action="ExternalSearchPost">
+<div class="container my-3">
+    <div class="row">
+        <div class="col my-5">
+            <div class="display-4">Wyszukaj w Google Books</div>
+            <p><b>Tutaj wyszukasz książki, których jeszcze nie oceniono w naszym serwisie</b></p>
+        </div>
+    </div>
+    <form method="post" asp-controller="FindBook" asp-action="ExternalSearchPostParams">
         <div class="row">
-            <div class="col">
+            <div class="col-12 col-lg-3 mb-2">
                 <label>Tytuł:</label>
-                <input asp-for=@Model.BookSearchParams.Title/>
+                <input class="form-control" asp-for=@Model.BookSearchParams.Title/>
             </div>
-            <div class="col">
+            <div class="col-12 col-lg-3 mb-2">
                 <label>Autor/Autorzy:</label>
-                <input asp-for=@Model.BookSearchParams.Author/>
+                <input class="form-control" asp-for=@Model.BookSearchParams.Author/>
             </div>
-            <div class="col">
+            <div class="col-12 col-lg-3 mb-2">
                 <label>Kod identyfikacyjny książki:</label>
-                <input asp-for=@Model.BookSearchParams.IdentyficationCode/>
+                <input class="form-control" asp-for=@Model.BookSearchParams.IdentyficationCode/>
             </div>
-            <div class="col">
-                <input type="submit" value="Szukaj" class="btn btn-primary"/>
+            <div class="col-12 col-lg-3 mb-2 d-flex justify-content-center align-items-center">
+                <input type="submit" value="Szukaj" class="btn btn-primary px-5 py-2"/>
             </div>
         </div>
     </form>
@@ -36,53 +42,66 @@
             @if(Model.Books.items != null)
             {
                 @foreach(BookJSON book in Model.Books.items){
-                    <div class="col-12 p-3 my-3 border border-secondary">
-                        <form method="post" asp-controller="Book" asp-action="AddReview">
-                            <div class="row d-flex flex-row">
-                                <div class="col-2">
+                    <div class="col-12 my-3 border border-secondary rounded">
+                        <form method="post" asp-controller="FindBook" asp-action="ExternalSearchPostBook">
+                            <div class="row d-flex flex-row p-3">
+                                <div class="col-2 p-0 d-flex align-items-center">
                                     @{imgUrl = (book.volumeInfo.imageLinks == null) ? "/img/No_picture_available.png" : book.volumeInfo.imageLinks.thumbnail;}
                                     <img src='@imgUrl' style="width:100%;"/>
                                 </div>
-                                <div class="col-10 p-4">
-                                    <h1>@book.volumeInfo.title</h1>
-
-                                    @{
-                                        authors = string.Empty;
-                                        if(book.volumeInfo.authors != null)
-                                        {
-                                            foreach(string author in book.volumeInfo.authors)
-                                            {
-                                                authors += author + " ";
-                                            }                                            
-                                        }
-                                        else
-                                        {
-                                            authors = "Brak podanego autora";
-                                        }
-                                    }
-                                    <h3>@authors</h3>
-
-                                    <p>@book.volumeInfo.subtitle</p>
-
-                                    <p>Kod książki:</p>
-                                    @if(book.volumeInfo.industryIdentifiers != null){
-                                        bookIdentifier = string.Empty;
-                                        foreach(ISBN isbn in book.volumeInfo.industryIdentifiers)
-                                        {
-                                            if(isbn.type == "OTHER")
-                                            {
-                                                <p>@isbn.identifier.Split(":")[0]: @isbn.identifier.Split(":")[1]</p>
-                                                bookIdentifier += isbn.identifier;
+                                <div class="col-10 px-3">
+                                    <div class="row d-flex align-content-between h-100">
+                                        <div class="col-12">
+                                            
+                                            @{
+                                                authors = string.Empty;
+                                                if(book.volumeInfo.authors != null)
+                                                {
+                                                    foreach(string author in book.volumeInfo.authors)
+                                                    {
+                                                        authors += author + " ";
+                                                    }                                            
+                                                }
+                                                else
+                                                {
+                                                    authors = "Brak podanego autora";
+                                                }
                                             }
-                                            else
-                                            {
-                                                <p>@isbn.type: @isbn.identifier</p>
-                                                bookIdentifier += isbn.type + ":" + isbn.identifier + " ";
-                                            }
-                                        }
-                                    }
 
-                                    <p>Rok publikacji: @book.volumeInfo.publishedDate</p>
+                                            <h1>@book.volumeInfo.title</h1>
+                                            <p>@authors</p>
+                                            <p>@book.volumeInfo.subtitle</p>
+                                        </div>
+                                        <div class="col-12">
+
+                                            @if(book.volumeInfo.industryIdentifiers != null){
+                                                bookIdentifier = string.Empty;
+                                                foreach(ISBN isbn in book.volumeInfo.industryIdentifiers)
+                                                {
+                                                    if(isbn.type == "OTHER")
+                                                    {
+                                                        bookIdentifier += @isbn.identifier.Split(":")[0] + " " + @isbn.identifier.Split(":")[1] + " ";
+                                                    }
+                                                    else
+                                                    {
+                                                        bookIdentifier += isbn.type + ": " + isbn.identifier + " ";
+                                                    }
+                                                }
+                                            }
+
+                                            <p class="m-0"><b>Kod książki: </b>@bookIdentifier <b>| Rok publikacji: </b>@book.volumeInfo.publishedDate</p>
+                                        </div>
+                                    </div>                                
+                                </div>
+                            </div>
+                            <hr class="my-0 mx-3" />
+                            <div class="row d-flex justify-content-between my-4">
+                                <div class="col-auto px-5">
+                                    <h3>Średnia ocen: 0 / 5</h3>
+                                    <p class="m-0">Ilość recenzji: 0</p>
+                                </div>
+                                <div class="col-auto m-3 m-lg-0 px-5 d-flex justify-content-end align-items-center">
+                                    <input type="submit" value="Dodaj recenzję" class="btn btn-primary py-2 px-5"/>
                                 </div>
                             </div>
 
@@ -93,21 +112,31 @@
                                 <input type="hidden" name="Summary" value="@book.volumeInfo.subtitle" />
                                 <input type="hidden" name="IdentyficationCode" value="@bookIdentifier" />
                                 <input type="hidden" name="PublishDate" value="@book.volumeInfo.publishedDate" />
-                                <input type="submit" value="Dodaj recenzję" class="btn btn-primary"/>
                             </div>
                         </form>
                     </div>
                 }
+                    <div class="col-12 my-5 bottomMargin">
+                        <div class="display-6"><b>Nie widzisz tu szukanej książki?</b></div>
+                        <p>Wskazówki wyszukiwania:</p>
+                        <ul>
+                            <li>Aby uzyskać najdokładniejsze wyniki wpisz jak najwięcej danych o książce</li>
+                            <li>Użyj znaków diakrytycznych np. ć, ö, ñ itp. jeśli znajdują się w tytule lub w imieniu autora.</li>
+                            <li>Kod książki musi w całości zgadzać się z wyszukiwaną książką. Wprowadzenie części kodu nie wyświetli wyników.</li>
+                        </ul>
+                    </div>
             }
             else
             {
-                <h2>Nie znaleziono książek.</h2>
-                <p>Wskazówki wyszukiwania:</p>
-                <ul>
-                    <li>Aby uzyskać najdokładniejsze wyniki wpisz jak najwięcej danych o książce</li>
-                    <li>Użyj znaków diakrytycznych np. ć, ö, ñ itp. jeśli znajdują się w tytule lub w imieniu autora.</li>
-                    <li>Kod książki musi w całości zgadzać się z wyszukiwaną książką. Wprowadzenie części kodu nie wyświetli wyników.</li>
-                </ul>                
+                <div class="my-5 bottomMargin">
+                    <div class="display-6"><b>Nie znaleziono książek.</b></div>
+                    <p>Wskazówki wyszukiwania:</p>
+                    <ul>
+                        <li>Aby uzyskać najdokładniejsze wyniki wpisz jak najwięcej danych o książce</li>
+                        <li>Jeśli w tytule lub w imieniu autora znajdują się znaki diakrytyczne np. ć, ö, ñ, spróbuj też zapisać je w postaci podstawowych liter np ć -> c, ö -> o</li>
+                        <li>Kod książki musi w całości zgadzać się z wyszukiwaną książką. Wprowadzenie części kodu nie wyświetli wyników.</li>
+                    </ul>
+                </div>
             }
         </div>
     </div>

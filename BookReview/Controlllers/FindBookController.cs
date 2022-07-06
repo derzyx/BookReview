@@ -49,7 +49,13 @@ namespace BookReview.Controlllers
                     author = bookParams.Book.Author,
                     isbn = bookParams.Book.IdentyficationCode
                 });
+        }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult InternalSearchPostReviews(int bookId)
+        {
+            return new RedirectToActionResult("Reviews", "Book", new { bookId = bookId });
         }
 
         public async Task<IActionResult> ExternalSearch(string? title, string? author, string? isbn)
@@ -84,7 +90,7 @@ namespace BookReview.Controlllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ExternalSearchPost([Bind("BookSearchParams")] BookSearchModel? bookParams)
+        public async Task<IActionResult> ExternalSearchPostParams([Bind("BookSearchParams")] BookSearchModel? bookParams)
         {
 
             return new RedirectToActionResult("ExternalSearch", "FindBook", 
@@ -93,6 +99,37 @@ namespace BookReview.Controlllers
                     author = bookParams.BookSearchParams.Author,
                     isbn = bookParams.BookSearchParams.IdentyficationCode
                 });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ExternalSearchPostBook(int? id, IFormCollection? formCollection)
+        {
+            Book? book = new Book();
+
+            if (id == null || id == 0)
+            {
+                book = new Book
+                {
+                    BookId = Convert.ToInt32(formCollection["BookId"]),
+                    Title = formCollection["Title"],
+                    Author = formCollection["Author"],
+                    Summary = formCollection["Summary"],
+                    IdentyficationCode = formCollection["IdentyficationCode"],
+                    ImgUrl = formCollection["ImgUrl"],
+                    PublishDate = formCollection["PublishDate"]
+                };
+            }
+            else
+            {
+                book = await _context.Book.FindAsync(id);
+            }
+
+            BookReviewModel bookReview = new BookReviewModel { ReviewedBook = book};
+
+            return new RedirectToActionResult("AddReview", "Book", book);
+
+            //return AddReview(new BookReviewModel { ReviewedBook = book });
         }
     }
 }
