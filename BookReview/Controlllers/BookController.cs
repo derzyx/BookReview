@@ -1,5 +1,6 @@
 ﻿using BookReview.ClassLibrary;
 using BookReview.ClassLibrary.DTO;
+using BookReview.ClassLibrary.KeyStorage;
 using BookReview.Data;
 using BookReview.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -22,6 +23,11 @@ namespace BookReview.Controlllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddReview([Bind("ReviewedBook, Review")] BookReviewModel bookParams)
         {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(SessionKeys.CurrentUser)))
+            {
+                return new RedirectToActionResult("Index", "Home", null);
+            }
+
             Book? currentBook = new Book();
             List<Review> reviews = new List<Review>();
 
@@ -54,7 +60,7 @@ namespace BookReview.Controlllers
             }
             else
             {
-                return new RedirectToActionResult("AddReview", "Book", new { bookId = currentBook.BookId });
+
             }
 
 
@@ -62,7 +68,7 @@ namespace BookReview.Controlllers
             {
                 _context.Review.Add(new Review
                 {
-                    AuthorId_FK = 1,
+                    AuthorId_FK = Convert.ToInt32(HttpContext.Session.GetString(SessionKeys.CurrentUser)),
                     BookId_FK = currentBook.BookId,
                     Summary = bookParams.Review.Summary,
                     Score = (int)bookParams.Review.Score,
@@ -85,6 +91,11 @@ namespace BookReview.Controlllers
 
         public async Task<IActionResult> AddReview(int? id, Book? book)
         {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(SessionKeys.CurrentUser)))
+            {
+                return new RedirectToActionResult("Login", "Account", null);
+            }
+
             Book? currentBook = new Book();
 
             if(id != null)
@@ -101,14 +112,26 @@ namespace BookReview.Controlllers
                 .FirstOrDefault();
             }
 
-
             if (currentBook == null)
             {
-                //return View(bookReviewModel);
                 return View(new BookReviewModel { ReviewedBook = book });
             }
             else
             {
+                //Check if current user have already reviewed this book
+                Review? review = _context.Review
+                    .Where(x =>
+                        x.BookId_FK == currentBook.BookId &&
+                        x.AuthorId_FK.ToString() == HttpContext.Session.GetString(SessionKeys.CurrentUser)
+                        )
+                    .FirstOrDefault();
+
+                if (review != null)
+                {
+                    //User have reviewed this book
+                    return new RedirectToActionResult("UpdateReview", "Book", new { reviewId = review.ReviewId });
+                }
+
                 return View(new BookReviewModel { ReviewedBook = currentBook });
             }
         }
@@ -142,10 +165,20 @@ namespace BookReview.Controlllers
 
         public async Task<IActionResult> UpdateReview(int reviewId)
         {
-            if(reviewId != 0)
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(SessionKeys.CurrentUser)))
+            {
+                return new RedirectToActionResult("Login", "Account", null);
+            }
+
+            if (reviewId != 0)
             {
                 Review review = await _context.Review.FindAsync(reviewId);
                 Book book = await _context.Book.FindAsync(review.BookId_FK);
+
+                if(review.AuthorId_FK.ToString() != HttpContext.Session.GetString(SessionKeys.CurrentUser))
+                {
+                    return new RedirectToActionResult("Reviews", "Book", new { bookId = book.BookId});
+                }
 
                 return View(new BookReviewModel { Review = review, ReviewedBook = book });
             }
@@ -159,6 +192,11 @@ namespace BookReview.Controlllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateReview([Bind("Review")] BookReviewModel model)
         {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(SessionKeys.CurrentUser)))
+            {
+                return new RedirectToActionResult("Index", "Home", null);
+            }
+
             List<Review> reviews = new List<Review>();
             Review review = await _context.Review.FindAsync(model.Review.ReviewId);
             Book book = await _context.Book.FindAsync(review.BookId_FK);
@@ -180,14 +218,40 @@ namespace BookReview.Controlllers
             return new RedirectToActionResult("MyAccount", "Account", new { userId = review.AuthorId_FK });
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> RemoveReview(int reviewId)
         {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(SessionKeys.CurrentUser)))
+            {
+                return new RedirectToActionResult("Index", "Home", null);
+            }
+
+            Review review = await _context.Review.FindAsync(reviewId);
+            Book book = await _context.Book.FindAsync(review.BookId_FK);
+
+            if (review == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return View(new BookReviewModel { Review = review, ReviewedBook = book });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RemoveReviewPost(int reviewId)
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(SessionKeys.CurrentUser)))
+            {
+                return new RedirectToActionResult("Index", "Home", null);
+            }
+
             List<Review> reviews = new List<Review>();
 
             Review review = await _context.Review.FindAsync(reviewId);
             Book book = await _context.Book.FindAsync(review.BookId_FK);
+
             int authorId = review.AuthorId_FK;
 
             _context.Review.Remove(review);

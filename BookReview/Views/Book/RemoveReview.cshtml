@@ -1,0 +1,37 @@
+﻿@using Microsoft.AspNetCore.Http
+@using BookReview.ClassLibrary.KeyStorage
+@inject IHttpContextAccessor Accessor
+@model BookReviewModel
+<div class="container bottomMargin">
+    <div class="row my-5">
+        <div class="col-12 text-center mb-5">
+            <div class="display-5">Czy na pewno chcesz usunąć tą recenzję?</div>
+        </div>
+        <div class="col-12 d-flex justify-content-evenly">
+            <a class="btn btn-secondary py-3 px-5" asp-controller="Account" asp-action="MyAccount" asp-route-userId=@Accessor.HttpContext.Session.GetString(SessionKeys.CurrentUser)>Anuluj</a>
+            <form method="post">
+                <button type="submit" class="btn btn-danger py-3 px-5" asp-controller="Book" asp-action="RemoveReviewPost" asp-route-reviewId=@Model.Review.ReviewId>Usuń</button>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 p-4 reviewBg mb-4">
+            <div class="row d-flex justify-content-between">
+                <div class="col">
+                    <p class="m-0">@Model.ReviewedBook.Author</p>
+                    <h3 class="m-0">@Model.ReviewedBook.Title</h3>
+                    <h5 class="m-0">Ocena: @Model.Review.Score / 5</h5>
+                </div>
+                <div class="col-auto d-flex align-items-end">
+                    <div class="row d-flex flex-column justify-content-between h-100">
+                        <div class="col-auto">
+                            <p class="m-0">@Model.Review.Date</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-2" />
+            <p style="font-size:18px;">@Model.Review.Summary</p>
+        </div>
+    </div>
+</div>

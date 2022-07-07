@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Http
+@using BookReview.ClassLibrary.KeyStorage
+@inject IHttpContextAccessor Accessor
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -20,20 +23,26 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Register">Zarejestruj się</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="FindBook" asp-action="InternalSearch">Znajdź książkę</a>
                         </li>
+                        @if (!string.IsNullOrEmpty(Accessor.HttpContext.Session.GetString(SessionKeys.CurrentUser)))
+                        {
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="MyAccount" asp-route-userId=@Accessor.HttpContext.Session.GetString(SessionKeys.CurrentUser)>Moje recenzje</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Logout">Wyloguj</a>
+                        </li>
+                        }
+                        else
+                        {
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">Logowanie</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="FindBook" asp-action="ExternalSearch">Szukaj</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Register">Zarejestruj się</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="FindBook" asp-action="InternalSearch">Znajdź książkę</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="MyAccount" asp-route-userId=1>Moje recenzje</a>
-                        </li>
+                        }
                     </ul>
                 </div>
             </div>

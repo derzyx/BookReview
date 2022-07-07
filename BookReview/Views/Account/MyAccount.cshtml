@@ -8,7 +8,7 @@
     <div class="container">
         <div class="row">
             <div class="col-12">
-                <div class="display-4">Witaj <b>Użytkownik</b></div>
+                <div class="display-4">Witaj <b>@Model.CurrentUser</b></div>
             </div>
         </div>
     </div>
@@ -21,32 +21,48 @@
         </div>
     </div>
     <div class="row">
-        @for (int i = 0; i < Model.Reviews.Count; i++)
+        @if(Model.Reviews.Count > 0)
         {
-            <div class="col-12 p-4 reviewBg mb-4">
-                <div class="row d-flex justify-content-between">
-                    <div class="col">
-                        <p class="m-0">@Model.ReviewedBooks[i].Author</p>
-                        <h3 class="m-0">@Model.ReviewedBooks[i].Title</h3>
-                        <h5 class="m-0">Ocena: @Model.Reviews[i].Score / 5</h5> 
-                    </div>
-                    <div class="col-auto d-flex align-items-end">
-                        <div class="row d-flex flex-column justify-content-between h-100">
-                            <div class="col-auto">
-                                <a class="btn btn-secondary" asp-controller="Book" asp-action="UpdateReview" asp-route-reviewId=@Model.Reviews[i].ReviewId>Edytuj</a>
-                                <form method="post">
-                                    <button type="submit" class="btn btn-danger" asp-controller="Book" asp-action="RemoveReview" asp-route-reviewId=@Model.Reviews[i].ReviewId>Usuń</button>
-                                </form>
-                            </div>
-                            <div class="col-auto">
-                                <p class="m-0">@Model.Reviews[i].Date</p>
+            for (int i = 0; i < Model.Reviews.Count; i++)
+            {
+                <div class="col-12 p-4 reviewBg mb-4">
+                    <div class="row d-flex justify-content-between">
+                        <div class="col">
+                            <p class="m-0">@Model.ReviewedBooks[i].Author</p>
+                            <h3 class="m-0">@Model.ReviewedBooks[i].Title</h3>
+                            <h5 class="m-0">Ocena: @Model.Reviews[i].Score / 5</h5> 
+                        </div>
+                        <div class="col-auto d-flex align-items-end">
+                            <div class="row d-flex flex-column justify-content-between h-100">
+                                <div class="col-auto">
+                                    <a class="btn btn-secondary" asp-controller="Book" asp-action="UpdateReview" asp-route-reviewId=@Model.Reviews[i].ReviewId>Edytuj</a>
+                                    <a type="submit" class="btn btn-danger" asp-controller="Book" asp-action="RemoveReview" asp-route-reviewId=@Model.Reviews[i].ReviewId>Usuń</a>
+                                </div>
+                                <div class="col-auto">
+                                    <p class="m-0">@Model.Reviews[i].Date</p>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <hr class="my-2"/>
+                    <p style="font-size:18px;">@Model.Reviews[i].Summary</p>
                 </div>
-                <hr class="my-2"/>
-                <p style="font-size:18px;">@Model.Reviews[i].Summary</p>
+            }
+        }
+        else
+        {
+            <div class="col-12">
+                <div class="display-6 m-0">
+                    Nic tu nie ma
+                </div>
+            </div>
+            <div class="col-12">
+                <p>Wyszukaj książkę aby dodać recenzję</p>
+            </div>
+            <div class="col-12">
+                <a class="btn btn-primary" asp-controller="FindBook" asp-action="InternalSearch">Znajdź książkę</a>
             </div>
         }
+
     </div>
 </div>

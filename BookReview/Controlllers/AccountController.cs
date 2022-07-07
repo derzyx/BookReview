@@ -1,5 +1,6 @@
 ﻿using BookReview.ClassLibrary;
 using BookReview.ClassLibrary.API_request_models;
+using BookReview.ClassLibrary.KeyStorage;
 using BookReview.Data;
 using BookReview.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -20,8 +21,13 @@ namespace BookReview.Controlllers
         }
 
         //GET login page
-        public async Task<IActionResult> Login(string? ErrorMessage)
+        public IActionResult Login(string? ErrorMessage)
         {
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString(SessionKeys.CurrentUser)))
+            {
+                return new RedirectToActionResult("Index", "Home", null);
+            }
+
             ViewBag.ErrorMessage = (string.IsNullOrEmpty(ErrorMessage)) ? "" : ErrorMessage;
             return View();
         }
@@ -31,13 +37,14 @@ namespace BookReview.Controlllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login([Bind("Email, Password")] LoginModel userToLogin)
         {
-            int count = await _context.User
+            User? user = _context.User
                 .Where(x => x.Password == userToLogin.Password && x.Email == userToLogin.Email)
-                .CountAsync();
+                .FirstOrDefault();
 
-            if(count == 1)
+            if(user != null)
             {
-                return View();
+                HttpContext.Session.SetString(SessionKeys.CurrentUser, user.UserId.ToString());
+                return new RedirectToActionResult("Index", "Home", null);
             }
             else
             {
@@ -46,9 +53,15 @@ namespace BookReview.Controlllers
         }
 
         //GET register page
-        public IActionResult Register(string? ErrorMessage)
+        public IActionResult Register(string? ErrorMessage, string? SuccessMessage)
         {
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString(SessionKeys.CurrentUser)))
+            {
+                return new RedirectToActionResult("Index", "Home", null);
+            }
+
             ViewBag.ErrorMessage = (string.IsNullOrEmpty(ErrorMessage)) ? "" : ErrorMessage;
+            ViewBag.SuccessMessage = SuccessMessage ?? "";
             return View();
         }
 
@@ -67,6 +80,7 @@ namespace BookReview.Controlllers
                 {
                     _context.Add(user);
                     await _context.SaveChangesAsync();
+                    return RedirectToAction("Register", new { SuccessMessage = "Pomyślnie dodano konto." });
                 }
                 else
                 {
@@ -78,12 +92,18 @@ namespace BookReview.Controlllers
 
         public IActionResult MyAccount(int userId)
         {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(SessionKeys.CurrentUser)))
+            {
+                return new RedirectToActionResult("Index", "Home", null);
+            }
+
             if(userId == 0)
             {
                 return new RedirectToActionResult("Index", "Home", null);
             }
             else
             {
+                string nick = _context.User.FindAsync(userId).Result.Nick;
                 List<Book> reviewedBooks = new List<Book>();
                 List<Review> reviews = _context.Review.Where(x => x.AuthorId_FK == userId).ToList();
                 foreach(Review review in reviews)
@@ -91,7 +111,20 @@ namespace BookReview.Controlllers
                     reviewedBooks.Add(_context.Book.Where(x => x.BookId == review.BookId_FK).First());
                 }
 
-                return View(new MyAccountModel { Reviews = reviews, ReviewedBooks = reviewedBooks });
+                return View(new MyAccountModel {CurrentUser = nick, Reviews = reviews, ReviewedBooks = reviewedBooks });
+            }
+        }
+
+        public IActionResult Logout()
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(SessionKeys.CurrentUser)))
+            {
+                return new RedirectToActionResult("Index", "Home", null);
+            }
+            else
+            {
+                HttpContext.Session.Remove(SessionKeys.CurrentUser);
+                return new RedirectToActionResult("Index", "Home", null);
             }
         }
     }

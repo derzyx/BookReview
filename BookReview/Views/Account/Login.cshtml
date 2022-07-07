@@ -4,12 +4,13 @@
     ViewData["Title"] = "Login";
 }
 
-<p class="text-danger">@ViewBag.ErrorMessage</p>
+
 
 <form method="post" asp-controller="Account" asp-action="Login">
     <div class="container my-5">
         <div class="row-cols-1">
             <div class="col-12 col-lg-6 mb-5 m-auto">
+                <p class="text-danger"><b>@ViewBag.ErrorMessage</b></p>
                 <div class="display-4">Logowanie</div>
             </div>
             <div class="col-12 col-lg-6 mb-5 m-auto">
@@ -22,7 +23,7 @@
             <div class="col-12 col-lg-6 mb-5 m-auto">
                 <div class="form-group">
                     <label asp-for="Password" class="control-label">Hasło:</label>
-                    <input asp-for="Password" class="form-control"/>
+                    <input type="password" asp-for="Password" class="form-control"/>
                     <span asp-validation-for="Password" class="text-danger"></span>
                 </div>
             </div>

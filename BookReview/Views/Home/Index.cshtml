@@ -1,4 +1,5 @@
-﻿@{
+﻿@model BookSearchModel
+@{
     ViewData["Title"] = "Home Page";
 }
 @{
@@ -9,9 +10,9 @@
     <div class="container">
         <div class="row">
             <div class="col-12">
-                <div class="display-4">Witaj na <b>BookReview</b></div>
+                <div class="display-4 text-center">Witaj na <b>BookReview</b></div>
             </div>
-            <div class="col-12">
+            <div class="col-12 text-center">
                 <div><p>Możesz tu zobaczyć recenzje książek lub ocenić książkę, którą ostatnio przeczytałeś/aś.</p></div>
             </div>
             <div class="col mt-4 d-flex justify-content-center">
@@ -28,7 +29,7 @@
         </div>
     </div>
     <div class="row d-flex justify-content-between">
-        @for (int i = 0; i < 3; i++)
+        @for (int i = 0; i < Model.InternalBooks.Count; i++)
         {
             <div class="col-12 my-3 border border-secondary rounded">
                 <div class="row d-flex d-row p-3">
@@ -39,25 +40,25 @@
                         <img src='@imgUrl' style="width:100%;" />
                     </div>
                     <div class="col-10 p-3">
-                        <h1>book.Title</h1>
-                        <p><b>book.Author</b></p>
-                        <p>book.Summary</p>
-                        <p>book.PublishDate</p>
-                        <p>book.IdentyficationCode</p>
+                        <h1>@Model.InternalBooks[i].Title</h1>
+                        <p><b>@Model.InternalBooks[i].Author</b></p>
+                        <p>@Model.InternalBooks[i].Summary</p>
+                        <p>@Model.InternalBooks[i].PublishDate</p>
+                        <p>@Model.InternalBooks[i].IdentyficationCode</p>
                     </div>
                 </div>
                 <hr class="my-0 mx-3" />
                 <div class="row d-flex justify-content-between my-4">
                     <div class="col-auto px-5">
-                        <h3>Średnia ocen: book.AvgScore / 5</h3>
-                        <p class="m-0">Ilość recenzji: book.ReviewsCount</p>
+                        <h3>Średnia ocen: @Model.InternalBooks[i].AvgScore / 5</h3>
+                        <p class="m-0">Ilość recenzji: @Model.InternalBooks[i].ReviewsCount</p>
                     </div>
                     <div class="col-auto m-3 m-lg-0 px-5 d-flex justify-content-end align-items-center">
                         <form class="mr-2">
-                            <input type="submit" class="btn btn-primary py-2 px-5 mx-2" value="Dodaj recenzję" asp-controller="Book" asp-action="AddReview" asp-route-id=book.BookId />
+                            <input type="submit" class="btn btn-primary py-2 px-5 mx-2" value="Dodaj recenzję" asp-controller="Book" asp-action="AddReview" asp-route-id=@Model.InternalBooks[i].BookId />
                         </form>
                         <form method="post">
-                            <input type="submit" class="btn btn-primary py-2 px-5 mx-2" value="Zobacz recenzje" asp-controller="FindBook" asp-action="InternalSearchPostReviews" asp-route-bookId=book.BookId />
+                            <input type="submit" class="btn btn-primary py-2 px-5 mx-2" value="Zobacz recenzje" asp-controller="FindBook" asp-action="InternalSearchPostReviews" asp-route-bookId=@Model.InternalBooks[i].BookId />
                         </form>
                     </div>
                 </div>
