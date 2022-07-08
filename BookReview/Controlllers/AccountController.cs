@@ -11,8 +11,6 @@ namespace BookReview.Controlllers
 {
     public class AccountController : Controller
     {
-        private const string baseUri = "https://www.googleapis.com/books/v1/volumes?q=intitle:tatry&langRestrict=pl&key=AIzaSyAS7p0rjmwhrfXYF0Ps5Vc4jvI_r9mnO5g";
-        private const string parameters = "?q=intitle:tatry&langRestrict=pl&key=AIzaSyAS7p0rjmwhrfXYF0Ps5Vc4jvI_r9mnO5g";
         private readonly DataContext _context;
 
         public AccountController(DataContext context)
@@ -35,20 +33,20 @@ namespace BookReview.Controlllers
         //POST user to log in
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login([Bind("Email, Password")] LoginModel userToLogin)
+        public IActionResult Login([Bind("Email, Password")] LoginModel userToLogin)
         {
             User? user = _context.User
                 .Where(x => x.Password == userToLogin.Password && x.Email == userToLogin.Email)
                 .FirstOrDefault();
 
-            if(user != null)
+            if (user != null)
             {
                 HttpContext.Session.SetString(SessionKeys.CurrentUser, user.UserId.ToString());
                 return new RedirectToActionResult("Index", "Home", null);
             }
             else
             {
-                return RedirectToAction(nameof(Login), new {ErrorMessage = "Nieprawidłowe dane logowania"});
+                return RedirectToAction(nameof(Login), new { ErrorMessage = "Nieprawidłowe dane logowania" });
             }
         }
 
@@ -60,7 +58,7 @@ namespace BookReview.Controlllers
                 return new RedirectToActionResult("Index", "Home", null);
             }
 
-            ViewBag.ErrorMessage = (string.IsNullOrEmpty(ErrorMessage)) ? "" : ErrorMessage;
+            ViewBag.ErrorMessage = ErrorMessage ?? "";
             ViewBag.SuccessMessage = SuccessMessage ?? "";
             return View();
         }

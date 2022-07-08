@@ -10,12 +10,10 @@ namespace BookReview.ClassLibrary.API_request_models
     {
         public List<BookJSON> items { get; set; }
     }
-
     public class BookJSON
     {
         public VolumeInfo volumeInfo { get; set; }
     }
-
     public class VolumeInfo
     {
         public string title { get; set; }
@@ -25,12 +23,10 @@ namespace BookReview.ClassLibrary.API_request_models
         public List<ISBN> industryIdentifiers { get; set; }
         public string? publishedDate { get; set; }
     }
-
     public class ImageLinks
     {
         public string? thumbnail { get; set; }
     }
-
     public class ISBN
     {
         public string? type { get; set; }

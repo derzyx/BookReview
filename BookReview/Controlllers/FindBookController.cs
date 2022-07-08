@@ -11,7 +11,7 @@ namespace BookReview.Controlllers
     {
 
         private const string baseUri = "https://www.googleapis.com/books/v1/volumes";
-        private string parameters = "?q=intitle:tatry&langRestrict=pl";
+        private string parameters = "";
         private const string apiKey = "key=AIzaSyAS7p0rjmwhrfXYF0Ps5Vc4jvI_r9mnO5g";
         private readonly DataContext _context;
 
@@ -62,6 +62,7 @@ namespace BookReview.Controlllers
         {
             if(title != null || author != null || isbn != null)
             {
+                // Google Books connection
                 string titleParam = (string.IsNullOrEmpty(title)) ? "" : $"intitle:{title}&";
                 string authorParam = (string.IsNullOrEmpty(author)) ? "" : $"inauthor:{author}&";
                 string isbnParam = (string.IsNullOrEmpty(isbn)) ? "" : $"isbn:{isbn}&";
@@ -82,7 +83,6 @@ namespace BookReview.Controlllers
                         books = await response.Content.ReadAsAsync<BookItems>();
                     }
                 }
-                //return new RedirectToActionResult("Search", "Book", books);
                 return View(new BookSearchModel { Books = books });
             }
             return View(new BookSearchModel { Books = null});
@@ -90,6 +90,7 @@ namespace BookReview.Controlllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        //Params to search Google Books DB
         public async Task<IActionResult> ExternalSearchPostParams([Bind("BookSearchParams")] BookSearchModel? bookParams)
         {
 
@@ -103,33 +104,23 @@ namespace BookReview.Controlllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ExternalSearchPostBook(int? id, IFormCollection? formCollection)
+        //Post info (recieved from Google Books) about book to be added to internal database
+        public async Task<IActionResult> ExternalSearchPostBook(IFormCollection? formCollection)
         {
             Book? book = new Book();
 
-            if (id == null || id == 0)
+            book = new Book
             {
-                book = new Book
-                {
-                    BookId = Convert.ToInt32(formCollection["BookId"]),
-                    Title = formCollection["Title"],
-                    Author = formCollection["Author"],
-                    Summary = formCollection["Summary"],
-                    IdentyficationCode = formCollection["IdentyficationCode"],
-                    ImgUrl = formCollection["ImgUrl"],
-                    PublishDate = formCollection["PublishDate"]
-                };
-            }
-            else
-            {
-                book = await _context.Book.FindAsync(id);
-            }
-
-            BookReviewModel bookReview = new BookReviewModel { ReviewedBook = book};
+                BookId = Convert.ToInt32(formCollection["BookId"]),
+                Title = formCollection["Title"],
+                Author = formCollection["Author"],
+                Summary = formCollection["Summary"],
+                IdentyficationCode = formCollection["IdentyficationCode"],
+                ImgUrl = formCollection["ImgUrl"],
+                PublishDate = formCollection["PublishDate"]
+            };
 
             return new RedirectToActionResult("AddReview", "Book", book);
-
-            //return AddReview(new BookReviewModel { ReviewedBook = book });
         }
     }
 }

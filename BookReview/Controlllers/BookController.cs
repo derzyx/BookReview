@@ -58,10 +58,6 @@ namespace BookReview.Controlllers
                     x.PublishDate == bookParams.ReviewedBook.PublishDate)
                 .FirstOrDefault();
             }
-            else
-            {
-
-            }
 
 
             if (bookParams.Review != null)
