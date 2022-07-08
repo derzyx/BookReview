@@ -31,6 +31,8 @@ namespace BookReview.Controlllers
             Book? currentBook = new Book();
             List<Review> reviews = new List<Review>();
 
+            // Check if book already exist in internal Db
+            // If not create one with given parameters
             currentBook = _context.Book.Where(x =>
                 x.Author == bookParams.ReviewedBook.Author &&
                 x.Title == bookParams.ReviewedBook.Title &&
@@ -213,6 +215,7 @@ namespace BookReview.Controlllers
 
             return new RedirectToActionResult("MyAccount", "Account", new { userId = review.AuthorId_FK });
         }
+
 
         public async Task<IActionResult> RemoveReview(int reviewId)
         {

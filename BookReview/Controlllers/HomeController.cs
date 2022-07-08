@@ -20,6 +20,8 @@ namespace BookReview.Controllers
 
         public IActionResult Index()
         {
+
+            // Get 3 top rated books
             List<Book> topRatedBooks = _context.Book
                 .OrderByDescending(x => x.AvgScore)
                 .Take(3)

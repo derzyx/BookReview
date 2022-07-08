@@ -11,8 +11,8 @@ namespace BookReview.Controlllers
     {
 
         private const string baseUri = "https://www.googleapis.com/books/v1/volumes";
-        private string parameters = "";
         private const string apiKey = "key=AIzaSyAS7p0rjmwhrfXYF0Ps5Vc4jvI_r9mnO5g";
+
         private readonly DataContext _context;
 
         public FindBookController(DataContext context)
@@ -66,12 +66,12 @@ namespace BookReview.Controlllers
                 string titleParam = (string.IsNullOrEmpty(title)) ? "" : $"intitle:{title}&";
                 string authorParam = (string.IsNullOrEmpty(author)) ? "" : $"inauthor:{author}&";
                 string isbnParam = (string.IsNullOrEmpty(isbn)) ? "" : $"isbn:{isbn}&";
-                parameters = $"?q={titleParam}{authorParam}{isbnParam}langRestrict=pl";
+                string parameters = $"?q={titleParam}{authorParam}{isbnParam}langRestrict=pl";
 
-                HttpClient client = new HttpClient();
-                client.BaseAddress = new Uri(baseUri);
                 BookItems books = new BookItems();
+                HttpClient client = new HttpClient();
 
+                client.BaseAddress = new Uri(baseUri);         
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(
                     new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
