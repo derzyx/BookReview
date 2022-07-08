@@ -35,7 +35,7 @@
                 <div class="row d-flex d-row p-3">
                     <div class="col-2 p-0 d-flex align-items-center">
                         @{
-                            imgUrl = "/img/No_picture_available.png";
+                            imgUrl = (string.IsNullOrEmpty(Model.InternalBooks[i].ImgUrl)) ? "/img/No_picture_available.png" : Model.InternalBooks[i].ImgUrl;
                         }
                         <img src='@imgUrl' style="width:100%;" />
                     </div>

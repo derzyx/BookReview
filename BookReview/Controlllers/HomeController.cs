@@ -2,6 +2,7 @@
 using BookReview.Data;
 using BookReview.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace BookReview.Controllers
@@ -23,8 +24,7 @@ namespace BookReview.Controllers
 
             // Get 3 top rated books
             List<Book> topRatedBooks = _context.Book
-                .OrderByDescending(x => x.AvgScore)
-                .Take(3)
+                .FromSqlRaw("SELECT TOP 3 * FROM dbo.Book ORDER BY AvgScore DESC, ReviewsCount DESC")
                 .ToList();
 
             return View(new BookSearchModel { InternalBooks = topRatedBooks});
